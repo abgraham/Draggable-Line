@@ -13,6 +13,7 @@
 @property(strong, nonatomic)NSLayoutConstraint *xPositionConstraint;
 @property(nonatomic)UIView *leftPoint;
 @property(nonatomic)UIView *rightPoint;
+@property(nonatomic)NSMutableArray *xValues;
 
 @end
 
@@ -48,11 +49,11 @@
                                                          multiplier:1.0
                                                           constant:[UIScreen mainScreen].bounds.size.width/2];
     [self addConstraint:self.xPositionConstraint];
-
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
 
+    self.xValues = [NSMutableArray arrayWithObjects:[NSNumber numberWithDouble:self.rightPoint.center.x], [NSNumber numberWithDouble:self.leftPoint.center.x], nil];
     UITouch *touch = [[event allTouches] anyObject];
     self.xPositionConstraint.constant = [touch locationInView:self].x;
 }
@@ -65,18 +66,22 @@
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
 
-    UITouch *touch = [[event allTouches] anyObject];
-    CGFloat touchXPosition = [touch locationInView:touch.view].x;
-    if (fabs(self.leftPoint.center.x - touchXPosition) <= fabs(self.rightPoint.center.x - touchXPosition)){
-        self.xPositionConstraint.constant = self.leftPoint.center.x;
-    } else {
-        self.xPositionConstraint.constant = self.rightPoint.center.x;
+    double lowestDifference = fabs([[self.xValues objectAtIndex:0]doubleValue] - self.line.center.x);
+    double newXValue = [[self.xValues objectAtIndex:0]doubleValue];
+
+    for (NSInteger i=1; i<[self.xValues count]; i++) {
+        double xValue = [[self.xValues objectAtIndex:i]doubleValue];
+        if (fabs(xValue - self.line.center.x) < lowestDifference) {
+            newXValue = xValue;
+        }
     }
+
+    self.xPositionConstraint.constant = newXValue;
     [self layoutIfNeeded];
 }
 
 
-- (void)initPoints{
+- (void)initPoints {
     self.rightPoint = [UIView new];
     self.rightPoint.backgroundColor = [UIColor purpleColor];
     [self.rightPoint setTranslatesAutoresizingMaskIntoConstraints:NO];
@@ -150,7 +155,6 @@
                                                                                         views:viewsDictionary];
 
     [self addConstraints:horizontalFormattingRightPoint];
-
 }
 
 @end
