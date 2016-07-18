@@ -18,14 +18,6 @@
 
 @implementation TransparentHomeForLine
 
-/*
-// Only override drawRect: if you perform custom drawing.
-// An empty implementation adversely affects performance during animation.
-- (void)drawRect:(CGRect)rect {
-    // Drawing code
-}
-*/
-
 - (void)initWithLine {
 
     [self initPoints];
@@ -62,15 +54,13 @@
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
 
     UITouch *touch = [[event allTouches] anyObject];
-    self.xPositionConstraint.constant = [touch locationInView:touch.view].x;
-    [self layoutIfNeeded];
+    self.xPositionConstraint.constant = [touch locationInView:self].x;
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
 
     UITouch *touch = [[event allTouches] anyObject];
-    self.xPositionConstraint.constant = [touch locationInView:touch.view].x;
-    [self layoutIfNeeded];
+    self.xPositionConstraint.constant = [touch locationInView:self].x;
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -148,14 +138,16 @@
     NSDictionary *viewsDictionary = @{@"leftPoint":self.leftPoint, @"rightPoint":self.rightPoint};
 
     NSArray *horizontalFormattingLeftPoint = [NSLayoutConstraint constraintsWithVisualFormat:@"H:|-30-[leftPoint]"
-                                                                                      options:0
-                                                                                      metrics:nil views:viewsDictionary];
+                                                                                     options:0
+                                                                                     metrics:nil
+                                                                                       views:viewsDictionary];
 
     [self addConstraints:horizontalFormattingLeftPoint];
 
     NSArray *horizontalFormattingRightPoint = [NSLayoutConstraint constraintsWithVisualFormat:@"H:[rightPoint]-30-|"
-                                                                                     options:0
-                                                                                     metrics:nil views:viewsDictionary];
+                                                                                      options:0
+                                                                                      metrics:nil
+                                                                                        views:viewsDictionary];
 
     [self addConstraints:horizontalFormattingRightPoint];
 
